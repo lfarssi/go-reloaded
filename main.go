@@ -51,8 +51,10 @@ func main() {
 			lAkwas := false
 			keyword := ""
 			for i := 0; i < len(res); i++ {
+				index := 0
 				if res[i] == '(' {
 					lAkwas = true
+					index = res[i]
 					continue
 				}
 				if res[i] == ')' {
@@ -62,8 +64,45 @@ func main() {
 				if lAkwas {
 					keyword += string(res[i])
 				}
+				if keyword == "cap" {
+
+					keyword  = ""
+				} else if keyword == "low" {
+					for i := index-1 ; i > 0 ; i--{
+						if res[i] == ' ' {
+							break
+						}
+						
+					}
+				}
 			}
 			fmt.Println(string(keyword))
 		}
 	}
+}
+
+
+
+func ToUpper(s string) string {
+	var res []rune
+	for _, i := range s {
+		if i >= 'a' && i <= 'z' {
+			res = append(res, i-32)
+		} else {
+			res = append(res, i)
+		}
+	}
+	return string(res)
+}
+
+func ToLower(s string) string {
+	var res []rune
+	for _, i := range s {
+		if i >= 'A' && i <= 'Z' {
+			res = append(res, i+32)
+		} else {
+			res = append(res, i)
+		}
+	}
+	return string(res)
 }
