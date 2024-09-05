@@ -48,7 +48,21 @@ func main() {
 				fmt.Println("err msg :", err)
 				return
 			}
-			lAkwas := false
+			t:=""
+			for _, v := range res {
+				if string(v) == "," {
+					t+=" "+string(v)+" "
+				} else {
+					t+=string(v)
+				}
+			}
+			arr := Split(string(t)," ")
+			for i := 0; i < len(arr); i++ {
+				if arr[i] == "(cap)"{
+					arr[i-1]=ToUpper(arr[i-1])
+				}
+			}
+			/*lAkwas := false
 			keyword := ""
 			for i := 0; i < len(res); i++ {
 				index := 0
@@ -65,22 +79,53 @@ func main() {
 					keyword += string(res[i])
 				}
 				if keyword == "cap" {
+					for i := index-1 ; i > 0 ; i--{
+						if res[i] == ' ' {
+							break
+						}
 
+					}
 					keyword  = ""
 				} else if keyword == "low" {
 					for i := index-1 ; i > 0 ; i--{
 						if res[i] == ' ' {
 							break
 						}
-						
+
 					}
+					keyword = ""
 				}
-			}
-			fmt.Println(string(keyword))
+			}*/
+			fmt.Printf("%v\n",arr)
 		}
 	}
 }
 
+
+
+func Split(s, sep string) []string {
+	var result []string
+
+	if len(sep) == 0 {
+		return []string{s} 
+	}
+
+	start := 0
+	for i := 0; i < len(s); i++ {
+		if i+len(sep) <= len(s) && s[i:i+len(sep)] == sep {
+			result = append(result, s[start:i])
+			// Move the start position past the separator
+			start = i + len(sep)
+			// Skip over the separator
+			i += len(sep) - 1
+		}
+	}
+
+	// Add the last segment after the last separator
+	result = append(result, s[start:])
+
+	return result
+}
 
 
 func ToUpper(s string) string {
