@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -48,18 +50,38 @@ func main() {
 				fmt.Println("err msg :", err)
 				return
 			}
-			t:=""
+			t := ""
 			for _, v := range res {
-				if string(v) == "," {
-					t+=" "+string(v)+" "
+				if v > 32 && v < 48 {
+					t += " " + string(v) + " "
 				} else {
-					t+=string(v)
+					t += string(v)
 				}
 			}
-			arr := Split(string(t)," ")
+			arr := strings.Fields(string(t))
 			for i := 0; i < len(arr); i++ {
-				if arr[i] == "(cap)"{
-					arr[i-1]=ToUpper(arr[i-1])
+				if arr[i] == "cap" {
+					arr[i-2] = Capitalize(arr[i-2])	
+				} else if arr[i] == "low" {
+					arr[i-2] = ToLower(arr[i-2])
+
+				} else if arr[i] == "up" {
+					arr[i-2] = ToUpper(arr[i-2])
+
+				} else if arr[i]=="bin"{
+					integer, err := strconv.ParseInt(arr[i-2],2,64)
+					if err!= nil{
+						fmt.Println("you can't convert")
+						return
+					}
+					arr[i-2]= strconv.FormatInt(integer,10)
+				} else if arr[i]=="hex"{
+					integer, err := strconv.ParseInt(arr[i-2],16,64)
+					if err!= nil{
+						fmt.Println("you can't convert")
+						return
+					}
+					arr[i-2]= strconv.FormatInt(integer,10)
 				}
 			}
 			/*lAkwas := false
@@ -84,7 +106,7 @@ func main() {
 							break
 						}
 
-					}
+					}category:formatters go
 					keyword  = ""
 				} else if keyword == "low" {
 					for i := index-1 ; i > 0 ; i--{
@@ -96,37 +118,42 @@ func main() {
 					keyword = ""
 				}
 			}*/
-			fmt.Printf("%v\n",arr)
+			fmt.Printf("%v\n", arr)
 		}
 	}
 }
 
-
-
-func Split(s, sep string) []string {
-	var result []string
-
-	if len(sep) == 0 {
-		return []string{s} 
+func Capitalize(word string) string {
+	word = ToLower(word)
+	for i := 0; i < len(word); i++ {
+		word = ToUpper(string(word[0])) + word[1:]
 	}
-
-	start := 0
-	for i := 0; i < len(s); i++ {
-		if i+len(sep) <= len(s) && s[i:i+len(sep)] == sep {
-			result = append(result, s[start:i])
-			// Move the start position past the separator
-			start = i + len(sep)
-			// Skip over the separator
-			i += len(sep) - 1
-		}
-	}
-
-	// Add the last segment after the last separator
-	result = append(result, s[start:])
-
-	return result
+	return word
 }
 
+// func Split(s, sep string) []string {
+// 	var result []string
+
+// 	if len(sep) == 0 {
+// 		return []string{s}
+// 	}
+
+// 	start := 0
+// 	for i := 0; i < len(s); i++ {
+// 		if i+len(sep) <= len(s) && s[i:i+len(sep)] == sep {
+// 			result = append(result, s[start:i])
+// 			// Move the start position past the separator
+// 			start = i + len(sep)
+// 			// Skip over the separator
+// 			i += len(sep) - 1
+// 		}
+// 	}
+
+// Add the last segment after the last separator
+// 	result = append(result, s[start:])
+
+// 	return result
+// }
 
 func ToUpper(s string) string {
 	var res []rune
