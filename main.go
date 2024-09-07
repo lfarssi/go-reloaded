@@ -51,37 +51,108 @@ func main() {
 				return
 			}
 			t := ""
+			insideParenthese := false
 			for _, v := range res {
-				if v > 32 && v < 48 {
-					t += " " + string(v) + " "
-				} else {
-					t += string(v)
-				}
+					if v == '(' {
+						t += " " + string(v)
+						insideParenthese = true
+					} else if v == ')' {
+
+						t += string(v) + " "
+						insideParenthese = false
+
+					} else {
+						if insideParenthese {
+							if v ==','{
+								t += string(v)
+							} else if v != ' '{
+								t += string(v)
+							} 
+						} else {
+							if v <32 && v <48 {
+								t += " " + string(v) + " "
+							} else {
+								t += string(v)
+							}
+						}
+					}
+				
 			}
-			arr := strings.Fields(string(t))
+			arr1 := strings.Fields(string(t))
+			res2 := ""
+			for _, item := range arr1{
+				if strings.HasPrefix(item, "(") && strings.HasSuffix(item, ")") {
+					content := item[1:len(item)-1]
+					if strings.Contains(content, ",") {
+						res2 += "(" + content + ") "
+					} else {
+						// Apply rules to update the content
+						switch content {
+						case "cap":
+							res2 += "(cap,1) "
+						case "low":
+							res2 += "(low,1)"
+						case "up":
+							res2 += "(up,1)"
+						case "hex", "bin":
+							res2 += "(" + content + ") "
+						default:
+							res2 += "(" + content + ") "
+						}
+					}
+				} else {
+					res2 += item + " "
+				}		
+				
+			}
+			arr := strings.Fields(res2)
 			for i := 0; i < len(arr); i++ {
-				if arr[i] == "cap" {
-					arr[i-2] = Capitalize(arr[i-2])	
-				} else if arr[i] == "low" {
-					arr[i-2] = ToLower(arr[i-2])
+				if arr[i] == "(cap)" || arr[i] == "low" || arr[i] == "up" {
+					// if i+2 < len(arr) && arr[i+1] == "," {
+					// 	num, err := strconv.Atoi(arr[i+2])
+					// 	if err != nil {
+					// 		fmt.Println("msg err : not a number ", err)
+					// 		return
+					// 	}
+					// }
+					if arr[i] == "cap" {
+						arr[i-2] = Capitalize(arr[i-2])
+						arr[i] = ""
+						arr[i+1] = ""
+						arr[i-1] = ""
+					} else if arr[i] == "low" {
+						arr[i-2] = ToLower(arr[i-2])
+						arr[i] = ""
+						arr[i+1] = ""
+						arr[i-1] = ""
 
-				} else if arr[i] == "up" {
-					arr[i-2] = ToUpper(arr[i-2])
+					} else if arr[i] == "up" {
+						arr[i-2] = ToUpper(arr[i-2])
+						arr[i] = ""
+						arr[i+1] = ""
+						arr[i-1] = ""
 
-				} else if arr[i]=="bin"{
-					integer, err := strconv.ParseInt(arr[i-2],2,64)
-					if err!= nil{
+					}
+				} else if arr[i] == "bin" {
+					integer, err := strconv.ParseInt(arr[i-2], 2, 64)
+					if err != nil {
 						fmt.Println("you can't convert")
 						return
 					}
-					arr[i-2]= strconv.FormatInt(integer,10)
-				} else if arr[i]=="hex"{
-					integer, err := strconv.ParseInt(arr[i-2],16,64)
-					if err!= nil{
+					arr[i-2] = strconv.FormatInt(integer, 10)
+					arr[i] = ""
+					arr[i+1] = ""
+					arr[i-1] = ""
+				} else if arr[i] == "hex" {
+					integer, err := strconv.ParseInt(arr[i-2], 16, 64)
+					if err != nil {
 						fmt.Println("you can't convert")
 						return
 					}
-					arr[i-2]= strconv.FormatInt(integer,10)
+					arr[i-2] = strconv.FormatInt(integer, 10)
+					arr[i] = ""
+					arr[i+1] = ""
+					arr[i-1] = ""
 				}
 			}
 			/*lAkwas := false
@@ -118,7 +189,12 @@ func main() {
 					keyword = ""
 				}
 			}*/
-			fmt.Printf("%v\n", arr)
+			str := ""
+			for _, v := range arr {
+				str += v + " "
+			}
+			arr2 := strings.Fields(string(str))
+			fmt.Printf("%v\n", arr2)
 		}
 	}
 }
