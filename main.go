@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"go-reloaded/func"
 )
 
 func main() {
@@ -53,36 +54,36 @@ func main() {
 			t := ""
 			insideParenthese := false
 			for _, v := range res {
-					if v == '(' {
-						t += " " + string(v)
-						insideParenthese = true
-					} else if v == ')' {
+				if v == '(' {
+					t += " " + string(v)
+					insideParenthese = true
+				} else if v == ')' {
 
-						t += string(v) + " "
-						insideParenthese = false
+					t += string(v) + " "
+					insideParenthese = false
 
+				} else {
+					if insideParenthese {
+						if v == ',' {
+							t += string(v)
+						} else if v != ' ' {
+							t += string(v)
+						}
 					} else {
-						if insideParenthese {
-							if v ==','{
-								t += string(v)
-							} else if v != ' '{
-								t += string(v)
-							} 
+						if v > 32 && v < 48 {
+							t += " " + string(v) + " "
 						} else {
-							if v <32 && v <48 {
-								t += " " + string(v) + " "
-							} else {
-								t += string(v)
-							}
+							t += string(v)
 						}
 					}
-				
+				}
+
 			}
 			arr1 := strings.Fields(string(t))
 			res2 := ""
-			for _, item := range arr1{
+			for _, item := range arr1 {
 				if strings.HasPrefix(item, "(") && strings.HasSuffix(item, ")") {
-					content := item[1:len(item)-1]
+					content := item[1 : len(item)-1]
 					if strings.Contains(content, ",") {
 						res2 += "(" + content + ") "
 					} else {
@@ -102,59 +103,71 @@ func main() {
 					}
 				} else {
 					res2 += item + " "
-				}		
-				
+				}
+
 			}
 			arr := strings.Fields(res2)
+			//fmt.Println(arr)
 			for i := 0; i < len(arr); i++ {
-				if arr[i] == "(cap)" || arr[i] == "low" || arr[i] == "up" {
-					// if i+2 < len(arr) && arr[i+1] == "," {
-					// 	num, err := strconv.Atoi(arr[i+2])
-					// 	if err != nil {
-					// 		fmt.Println("msg err : not a number ", err)
-					// 		return
-					// 	}
-					// }
-					if arr[i] == "cap" {
-						arr[i-2] = Capitalize(arr[i-2])
-						arr[i] = ""
-						arr[i+1] = ""
-						arr[i-1] = ""
-					} else if arr[i] == "low" {
-						arr[i-2] = ToLower(arr[i-2])
-						arr[i] = ""
-						arr[i+1] = ""
-						arr[i-1] = ""
-
-					} else if arr[i] == "up" {
-						arr[i-2] = ToUpper(arr[i-2])
-						arr[i] = ""
-						arr[i+1] = ""
-						arr[i-1] = ""
-
+				insideParenthese2 := false
+				if strings.HasPrefix(arr[i], "(") && strings.HasSuffix(arr[i], ")") {
+					insideParenthese2 = true
+				} else{
+					insideParenthese2 = false
+				}
+				var Akwas []string
+				var action string
+				var nb int
+				if insideParenthese2 {
+					arr[i]= strings.Trim(arr[i],"()")
+					Akwas = strings.Split(arr[i],",")
+					arr[i]=""
+					action = Akwas[0]
+					if len(Akwas)==2{
+						nb, err = strconv.Atoi(Akwas[1])
+						if err != nil {
+							fmt.Println("msg err : not a number ", err)
+							continue
+						}
 					}
-				} else if arr[i] == "bin" {
-					integer, err := strconv.ParseInt(arr[i-2], 2, 64)
+				}
+				if action == "cap" || action == "low" || action == "up" {
+					for j:=1 ; j <= nb ; j++ {
+						if i-j-1 < 0 {
+							break
+						}
+						if action == "cap" {
+							arr[i-j] = functions.Capitalize(arr[i-j])
+		
+						} else if action == "low" {
+							arr[i-j] = functions.ToLower(arr[i-j])
+		
+							
+						} else if action == "up" {
+							arr[i-j] = functions.ToUpper(arr[i-j])
+		
+						}
+					}
+					
+				} else if action == "bin" {
+					integer, err := strconv.ParseInt(arr[i-1], 2, 64)
 					if err != nil {
 						fmt.Println("you can't convert")
 						return
 					}
-					arr[i-2] = strconv.FormatInt(integer, 10)
-					arr[i] = ""
-					arr[i+1] = ""
-					arr[i-1] = ""
-				} else if arr[i] == "hex" {
-					integer, err := strconv.ParseInt(arr[i-2], 16, 64)
+					arr[i-1] = strconv.FormatInt(integer, 10)
+
+				} else if action == "hex" {
+					integer, err := strconv.ParseInt(arr[i-1], 16, 64)
 					if err != nil {
 						fmt.Println("you can't convert")
 						return
 					}
-					arr[i-2] = strconv.FormatInt(integer, 10)
-					arr[i] = ""
-					arr[i+1] = ""
-					arr[i-1] = ""
+					arr[i-1] = strconv.FormatInt(integer, 10)
+
 				}
 			}
+
 			/*lAkwas := false
 			keyword := ""
 			for i := 0; i < len(res); i++ {
@@ -171,6 +184,16 @@ func main() {
 				if lAkwas {
 					keyword += string(res[i])
 				}
+	for _, i := range s {
+		if i >= 'A' && i <= 'Z' {
+			res = append(res, i+32)
+		} else {
+			res = append(res, i)
+		}
+	}
+	return string(res)
+}
+
 				if keyword == "cap" {
 					for i := index-1 ; i > 0 ; i--{
 						if res[i] == ' ' {
@@ -178,7 +201,8 @@ func main() {
 						}
 
 					}category:formatters go
-					keyword  = ""
+										arr[i+1] = ""
+						arr[i-1] = ""	keyword  = ""
 				} else if keyword == "low" {
 					for i := index-1 ; i > 0 ; i--{
 						if res[i] == ' ' {
@@ -190,67 +214,12 @@ func main() {
 				}
 			}*/
 			str := ""
-			for _, v := range arr {
-				str += v + " "
+			for k:=0 ; k <len(arr); k++ {
+				str += arr[k] + " "
 			}
-			arr2 := strings.Fields(string(str))
-			fmt.Printf("%v\n", arr2)
+			str2 := functions.TextFormated(str)
+			//arr2 := strings.Fields(string(str2))
+			fmt.Printf("%v\n", str2)
 		}
 	}
-}
-
-func Capitalize(word string) string {
-	word = ToLower(word)
-	for i := 0; i < len(word); i++ {
-		word = ToUpper(string(word[0])) + word[1:]
-	}
-	return word
-}
-
-// func Split(s, sep string) []string {
-// 	var result []string
-
-// 	if len(sep) == 0 {
-// 		return []string{s}
-// 	}
-
-// 	start := 0
-// 	for i := 0; i < len(s); i++ {
-// 		if i+len(sep) <= len(s) && s[i:i+len(sep)] == sep {
-// 			result = append(result, s[start:i])
-// 			// Move the start position past the separator
-// 			start = i + len(sep)
-// 			// Skip over the separator
-// 			i += len(sep) - 1
-// 		}
-// 	}
-
-// Add the last segment after the last separator
-// 	result = append(result, s[start:])
-
-// 	return result
-// }
-
-func ToUpper(s string) string {
-	var res []rune
-	for _, i := range s {
-		if i >= 'a' && i <= 'z' {
-			res = append(res, i-32)
-		} else {
-			res = append(res, i)
-		}
-	}
-	return string(res)
-}
-
-func ToLower(s string) string {
-	var res []rune
-	for _, i := range s {
-		if i >= 'A' && i <= 'Z' {
-			res = append(res, i+32)
-		} else {
-			res = append(res, i)
-		}
-	}
-	return string(res)
 }
