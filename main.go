@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -40,17 +39,15 @@ func main() {
 			fmt.Println("the extension must be .txt")
 			os.Exit(1)
 		} else {
-			file, err := os.Open(in)
+			res, err := os.ReadFile(in)
 			if err != nil {
 				fmt.Println("Err msg: ", err)
 				return
 			}
-			defer file.Close()
-			res, err := io.ReadAll(file)
-			if err != nil {
-				fmt.Println("err msg :", err)
-				return
-			}
+			// lines := strings.Split(string(res),"\n")
+			// for _, line := range lines {
+				
+			// }
 			t := ""
 			insideParenthese := false
 			for _, v := range res {
@@ -108,6 +105,11 @@ func main() {
 			arr := strings.Fields(res2)
 			//fmt.Println(arr)
 			for i := 0; i < len(arr); i++ {
+				if arr[i] == "a" && functions.IsVowel(arr[i+1]){
+					arr[i] = "an"
+				} else if arr[i] == "an" && !functions.IsVowel(arr[i+1]){
+					arr[i] = "a"
+				}
 				insideParenthese2 := false
 				if strings.HasPrefix(arr[i], "(") && strings.HasSuffix(arr[i], ")") {
 					insideParenthese2 = true
@@ -171,8 +173,7 @@ func main() {
 				}
 			}			
 			str2 := functions.TextFormated(arr)
-			arr2:= strings.Fields(str2)
-			quoted, resulta := functions.Quote(arr2)
+			quoted, resulta := functions.Quote(str2)
 			arr3 := strings.Fields(resulta)
 			if quoted {
 				fmt.Printf("%v\n", arr3)

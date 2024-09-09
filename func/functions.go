@@ -28,30 +28,48 @@ func TextFormated(s []string) string {
 	return strings.TrimSpace(res)
 }
 
-func Quote(s []string) (bool, string) {
+
+func Quote(s string) (bool, string) {
 	var result string
+	wordInside := ""
 	quoteOpen := false 
 
 	for i := 0; i < len(s); i++ {
 		word := s[i]
-		if strings.HasPrefix(word, "'") {
-			result += " " + word
-			quoteOpen = true
-		} else if quoteOpen{
-			if strings.HasPrefix(word,"'"){
-				result += word + " "
+		if word == '\''{
+			if quoteOpen {
+				result += strings.TrimSpace(wordInside)+"'"
 				quoteOpen = false
+				wordInside =""
+			} else {
+				quoteOpen = true
+				wordInside = ""
+				result += "'"
 			}
+			continue
+		}
+		if quoteOpen {
+			wordInside+= string(word)
 		} else {
-				result += " " +word + " "
-			
+			result += wordInside
 		}
 	}
-
+	if quoteOpen {
+		result += wordInside
+	}
 	return true, result
 }
 
+func IsVowel(s string) bool {
+	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0]== 'u' {
+		return true
+	}
+	return false
+}
 
+func IsAlphabet(s byte) bool {
+	return (s < 'a' || s > 'z') && (s < 'A' || s > 'Z') && (s < '0' || s > '9')
+}
 
 func IsWord(s string) bool {
 	for _, r := range s {
@@ -98,6 +116,8 @@ func ToUpper(s string) string {
 	for _, i := range s {
 		if i >= 'a' && i <= 'z' {
 			res = append(res, i-32)
+		} else if i == 'é' {
+			res= append(res, 'É')
 		} else {
 			res = append(res, i)
 		}
