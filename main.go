@@ -132,7 +132,6 @@ func main() {
 						}
 					}
 				}
-				fmt.Println(arr[i])
 				if action == "cap" || action == "low" || action == "up" {
 					for j:=1 ; j <= nb ; j++ {
 						if i-j-1 < 0 {
