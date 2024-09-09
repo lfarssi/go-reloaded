@@ -172,11 +172,10 @@ func main() {
 				}
 			}			
 			str2 := functions.TextFormated(arr)
-			quoted, resulta := functions.Quote(str2)
+			resulta := functions.Quote(str2)
 			arr3 := strings.Fields(resulta)
-			if quoted {
-				fmt.Printf("%v\n", arr3)
-			}
+			fmt.Printf("%v\n", arr3)
+			
 		}
 	}
 }

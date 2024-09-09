@@ -29,7 +29,7 @@ func TextFormated(s []string) string {
 }
 
 
-func Quote(s string) (bool, string) {
+func Quote(s string)  string {
 	var result string
 	wordInside := ""
 	quoteOpen := false 
@@ -40,7 +40,7 @@ func Quote(s string) (bool, string) {
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside)+"'"
 				quoteOpen = false
-				wordInside =""
+				wordInside = ""
 			} else {
 				quoteOpen = true
 				wordInside = ""
@@ -49,15 +49,15 @@ func Quote(s string) (bool, string) {
 			continue
 		}
 		if quoteOpen {
-			wordInside+= string(word)
+			wordInside  += string(word)
 		} else {
-			result += wordInside
+			result += string(word)
 		}
 	}
 	if quoteOpen {
 		result += wordInside
 	}
-	return true, result
+	return result
 }
 
 func IsVowel(s string) bool {
