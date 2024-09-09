@@ -5,30 +5,62 @@ import (
 	"unicode"
 )
 
-func TextFormated(s  string) string{
+func TextFormated(s []string) string {
 	var res string
-	punc := false
-	for _, v := range s {
-		if v == ',' || v == ';' || v == '!' || v == '?' || v == ':' {
-			if punc {
-				res += " "
+	ponc := ".?:!;,"
+	for i, ch := range s {
+		if ch == "," || ch == "!" || ch == "?" || ch == ":" || ch == ";" || ch == "." {
+			if len(res) > 0 && res[len(res)-1] == ' ' {
+				res = res[:len(res)-1]
 			}
-			res += string(v)
-			punc = false
-		} else if unicode.IsSpace(v) {
-			if !punc {
+			if len(res) > 0 && !strings.ContainsAny(res, ponc) {
+				res += ch
+			} else {
+				res += string(ch)
+			}
+			if i+1 < len(s) && s[i+1] != " " {
 				res += " "
-				punc = true
 			}
 		} else {
-			res += string(v)
-			punc = false
+			res += ch + " "
 		}
 	}
-	res = strings.TrimSpace(res)
-	return res
+	return strings.TrimSpace(res)
 }
 
+func Quote(s []string) (bool, string) {
+	var result string
+	quoteOpen := false 
+
+	for i := 0; i < len(s); i++ {
+		word := s[i]
+		if strings.HasPrefix(word, "'") {
+			result += " " + word
+			quoteOpen = true
+		} else if quoteOpen{
+			if strings.HasPrefix(word,"'"){
+				result += word + " "
+				quoteOpen = false
+			}
+		} else {
+				result += " " +word + " "
+			
+		}
+	}
+
+	return true, result
+}
+
+
+
+func IsWord(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLetter(r) { 
+			return false
+		}
+	}
+	return true
+}
 func Capitalize(word string) string {
 	word = ToLower(word)
 	for i := 0; i < len(word); i++ {

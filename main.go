@@ -70,7 +70,7 @@ func main() {
 							t += string(v)
 						}
 					} else {
-						if v > 32 && v < 48 {
+						if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';'{
 							t += " " + string(v) + " "
 						} else {
 							t += string(v)
@@ -87,7 +87,6 @@ func main() {
 					if strings.Contains(content, ",") {
 						res2 += "(" + content + ") "
 					} else {
-						// Apply rules to update the content
 						switch content {
 						case "cap":
 							res2 += "(cap,1) "
@@ -131,10 +130,14 @@ func main() {
 						}
 					}
 				}
+				fmt.Println(arr[i])
 				if action == "cap" || action == "low" || action == "up" {
 					for j:=1 ; j <= nb ; j++ {
 						if i-j-1 < 0 {
 							break
+						}
+						if !functions.IsWord(arr[i-j]) { 
+							continue
 						}
 						if action == "cap" {
 							arr[i-j] = functions.Capitalize(arr[i-j])
@@ -166,60 +169,14 @@ func main() {
 					arr[i-1] = strconv.FormatInt(integer, 10)
 
 				}
+			}			
+			str2 := functions.TextFormated(arr)
+			arr2:= strings.Fields(str2)
+			quoted, resulta := functions.Quote(arr2)
+			arr3 := strings.Fields(resulta)
+			if quoted {
+				fmt.Printf("%v\n", arr3)
 			}
-
-			/*lAkwas := false
-			keyword := ""
-			for i := 0; i < len(res); i++ {
-				index := 0
-				if res[i] == '(' {
-					lAkwas = true
-					index = res[i]
-					continue
-				}
-				if res[i] == ')' {
-					lAkwas = false
-					continue
-				}
-				if lAkwas {
-					keyword += string(res[i])
-				}
-	for _, i := range s {
-		if i >= 'A' && i <= 'Z' {
-			res = append(res, i+32)
-		} else {
-			res = append(res, i)
-		}
-	}
-	return string(res)
-}
-
-				if keyword == "cap" {
-					for i := index-1 ; i > 0 ; i--{
-						if res[i] == ' ' {
-							break
-						}
-
-					}category:formatters go
-										arr[i+1] = ""
-						arr[i-1] = ""	keyword  = ""
-				} else if keyword == "low" {
-					for i := index-1 ; i > 0 ; i--{
-						if res[i] == ' ' {
-							break
-						}
-
-					}
-					keyword = ""
-				}
-			}*/
-			str := ""
-			for k:=0 ; k <len(arr); k++ {
-				str += arr[k] + " "
-			}
-			str2 := functions.TextFormated(str)
-			//arr2 := strings.Fields(string(str2))
-			fmt.Printf("%v\n", str2)
 		}
 	}
 }
