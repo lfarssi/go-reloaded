@@ -28,17 +28,16 @@ func TextFormated(s []string) string {
 	return strings.TrimSpace(res)
 }
 
-
-func Quote(s string)  string {
+func Quote(s string) string {
 	var result string
 	wordInside := ""
-	quoteOpen := false 
+	quoteOpen := false
 
 	for i := 0; i < len(s); i++ {
 		word := s[i]
-		if word == '\''{
+		if word == '\'' {
 			if quoteOpen {
-				result += strings.TrimSpace(wordInside)+"'"
+				result += strings.TrimSpace(wordInside) + "'"
 				quoteOpen = false
 				wordInside = ""
 			} else {
@@ -49,7 +48,7 @@ func Quote(s string)  string {
 			continue
 		}
 		if quoteOpen {
-			wordInside  += string(word)
+			wordInside += string(word)
 		} else {
 			result += string(word)
 		}
@@ -61,10 +60,18 @@ func Quote(s string)  string {
 }
 
 func IsVowel(s string) bool {
-	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0]== 'u' {
+	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' {
 		return true
 	}
 	return false
+}
+func HandleVowel(arr []string, i int) []string {
+	if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(arr[i+1]) {
+		arr[i] += "n"
+	} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(arr[i+1]) {
+		arr[i] = arr[i][:len(arr[i])-1]
+	}
+	return arr
 }
 
 func IsAlphabet(s byte) bool {
@@ -73,7 +80,7 @@ func IsAlphabet(s byte) bool {
 
 func IsWord(s string) bool {
 	for _, r := range s {
-		if !unicode.IsLetter(r) { 
+		if !unicode.IsLetter(r) {
 			return false
 		}
 	}
@@ -117,7 +124,7 @@ func ToUpper(s string) string {
 		if i >= 'a' && i <= 'z' {
 			res = append(res, i-32)
 		} else if i == 'é' {
-			res= append(res, 'É')
+			res = append(res, unicode.ToUpper(i))
 		} else {
 			res = append(res, i)
 		}

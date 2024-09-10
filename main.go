@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	functions "go-reloaded/func"
 	"os"
 	"strconv"
 	"strings"
-	"go-reloaded/func"
 )
 
 func main() {
@@ -44,10 +44,6 @@ func main() {
 				fmt.Println("Err msg: ", err)
 				return
 			}
-			// lines := strings.Split(string(res),"\n")
-			// for _, line := range lines {
-				
-			// }
 			t := ""
 			insideParenthese := false
 			for _, v := range res {
@@ -55,7 +51,6 @@ func main() {
 					t += " " + string(v)
 					insideParenthese = true
 				} else if v == ')' {
-
 					t += string(v) + " "
 					insideParenthese = false
 
@@ -67,7 +62,7 @@ func main() {
 							t += string(v)
 						}
 					} else {
-						if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';'{
+						if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';' {
 							t += " " + string(v) + " "
 						} else {
 							t += string(v)
@@ -76,6 +71,7 @@ func main() {
 				}
 
 			}
+
 			arr1 := strings.Fields(string(t))
 			res2 := ""
 			for _, item := range arr1 {
@@ -103,28 +99,23 @@ func main() {
 
 			}
 			arr := strings.Fields(res2)
-			//fmt.Println(arr)
 			for i := 0; i < len(arr); i++ {
-				if arr[i] == "a" && functions.IsVowel(arr[i+1]){
-					arr[i] = "an"
-				} else if arr[i] == "an" && !functions.IsVowel(arr[i+1]){
-					arr[i] = "a"
-				}
 				insideParenthese2 := false
 				if strings.HasPrefix(arr[i], "(") && strings.HasSuffix(arr[i], ")") {
 					insideParenthese2 = true
-				} else{
+				} else {
 					insideParenthese2 = false
 				}
 				var Akwas []string
 				var action string
 				var nb int
 				if insideParenthese2 {
-					arr[i]= strings.Trim(arr[i],"()")
-					Akwas = strings.Split(arr[i],",")
-					arr[i]=""
+					arr[i] = strings.Trim(arr[i], "()")
+					Akwas = strings.Split(arr[i], ",")
+					arr[i] = ""
+					i--
 					action = Akwas[0]
-					if len(Akwas)==2{
+					if len(Akwas) == 2 {
 						nb, err = strconv.Atoi(Akwas[1])
 						if err != nil {
 							fmt.Println("msg err : not a number ", err)
@@ -133,49 +124,60 @@ func main() {
 					}
 				}
 				if action == "cap" || action == "low" || action == "up" {
-					for j:=1 ; j <= nb ; j++ {
-						if i-j-1 < 0 {
+					for j := 1; j <= nb; j++ {
+						if i-j < 0 {
 							break
 						}
-						if !functions.IsWord(arr[i-j]) { 
+						if !functions.IsWord(arr[i-j]) {
 							continue
 						}
 						if action == "cap" {
 							arr[i-j] = functions.Capitalize(arr[i-j])
-		
+
 						} else if action == "low" {
 							arr[i-j] = functions.ToLower(arr[i-j])
-		
-							
+
 						} else if action == "up" {
 							arr[i-j] = functions.ToUpper(arr[i-j])
-		
+
 						}
 					}
-					
+
 				} else if action == "bin" {
 					integer, err := strconv.ParseInt(arr[i-1], 2, 64)
 					if err != nil {
-						fmt.Println("you can't convert")
-						return
+						i -= 2
+						continue
 					}
 					arr[i-1] = strconv.FormatInt(integer, 10)
+					arr[i] = ""
+					i--
 
 				} else if action == "hex" {
 					integer, err := strconv.ParseInt(arr[i-1], 16, 64)
 					if err != nil {
 						fmt.Println("you can't convert")
-						return
+						continue
 					}
 					arr[i-1] = strconv.FormatInt(integer, 10)
+					arr[i] = ""
+					i--
 
 				}
-			}			
+			}
 			str2 := functions.TextFormated(arr)
 			resulta := functions.Quote(str2)
-			arr3 := strings.Fields(resulta)
-			fmt.Printf("%v\n", arr3)
-			
+			finalres := ""
+			lines := strings.Split(string(resulta), "\n")
+			for _, line := range lines {
+				finalres += line + "\n"
+			}
+			err = os.WriteFile(out, []byte(finalres), 0o644)
+			if err != nil {
+				fmt.Println("Error writing file:", err)
+				return
+			}
+			fmt.Println("bravoo!!!")
 		}
 	}
 }
