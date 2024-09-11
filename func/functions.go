@@ -97,7 +97,7 @@ func HandleParenthese(s string) string {
 				} else {
 					if insideParenthese {
 						if v == ',' {
-							t += string(v)
+							t += string(v) + " "
 						} else if v != ' ' {
 							t += string(v)
 						}
@@ -114,11 +114,9 @@ func HandleParenthese(s string) string {
 	return t
 }
 
-func HandleKeyword(s string) string{
-			str := HandleParenthese(s)
-			arr1 := strings.Fields(string(str))
+func HandleParentheseParam(s []string) string {
 			res2 := ""
-			for _, item := range arr1 {
+			for _, item := range s {
 				if strings.HasPrefix(item, "(") && strings.HasSuffix(item, ")") {
 					content := item[1 : len(item)-1]
 					if strings.Contains(content, ",") {
@@ -128,9 +126,9 @@ func HandleKeyword(s string) string{
 						case "cap":
 							res2 += "(cap,1) "
 						case "low":
-							res2 += "(low,1)"
+							res2 += "(low,1) "
 						case "up":
-							res2 += "(up,1)"
+							res2 += "(up,1) "
 						case "hex", "bin":
 							res2 += "(" + content + ") "
 						default:
@@ -142,6 +140,14 @@ func HandleKeyword(s string) string{
 				}
 
 			}
+	return res2
+}
+
+func HandleKeyword(s string) string{
+			str := HandleParenthese(s)
+			arr1 := strings.Fields(string(str))
+			res2 := HandleParentheseParam(arr1)
+			fmt.Println(res2)
 			arr := strings.Fields(res2)
 			for i := 0; i < len(arr); i++ {
 				insideParenthese2 := false
