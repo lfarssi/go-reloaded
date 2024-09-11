@@ -52,7 +52,6 @@ func main() {
 				line = functions.HandleKeyword(line)
 				finalres += line + "\n"
 			}
-			fmt.Println(finalres)
 			
 			err = os.WriteFile(out, []byte(finalres), 0o644)
 			if err != nil {

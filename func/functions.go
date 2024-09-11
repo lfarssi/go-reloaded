@@ -83,8 +83,8 @@ func HandleVowel(s string) string {
 	return str
 }
 
-func HandleKeyword(s string) string{
-			t := ""
+func HandleParenthese(s string) string {
+	t := ""
 			insideParenthese := false
 			for _, v := range s {
 				if v == '(' {
@@ -111,8 +111,12 @@ func HandleKeyword(s string) string{
 				}
 
 			}
+	return t
+}
 
-			arr1 := strings.Fields(string(t))
+func HandleKeyword(s string) string{
+			str := HandleParenthese(s)
+			arr1 := strings.Fields(string(str))
 			res2 := ""
 			for _, item := range arr1 {
 				if strings.HasPrefix(item, "(") && strings.HasSuffix(item, ")") {
