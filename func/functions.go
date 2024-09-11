@@ -155,8 +155,9 @@ func HandleKeyword(s string) string{
 					arr[i] = ""
 					i--
 					action = Akwas[0]
+					var err error
 					if len(Akwas) == 2 {
-						nb, err := strconv.Atoi(Akwas[1])
+						nb, err = strconv.Atoi(Akwas[1])
 						if err != nil {
 							fmt.Println("msg err : not a number ", err)
 							continue
@@ -164,7 +165,7 @@ func HandleKeyword(s string) string{
 					}
 				}
 				if action == "cap" || action == "low" || action == "up" {
-					for j := 1; j <= nb; j++ {
+					for j := 1; j <= nb ; j++ {
 						if i-j < 0 {
 							break
 						}
@@ -173,12 +174,18 @@ func HandleKeyword(s string) string{
 						}
 						if action == "cap" {
 							arr[i-j] = Capitalize(arr[i-j])
+							arr[i] = ""
+							i--
 
 						} else if action == "low" {
 							arr[i-j] = ToLower(arr[i-j])
+							arr[i] = ""
+							i--
 
 						} else if action == "up" {
 							arr[i-j] = ToUpper(arr[i-j])
+							arr[i] = ""
+							i--
 
 						}
 					}

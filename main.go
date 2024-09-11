@@ -49,6 +49,7 @@ func main() {
 				line = functions.HandleVowel(line)
 				line = functions.HandleQuote(line)
 				line = functions.TextFormated(strings.Fields(line))
+				line = functions.HandleKeyword(line)
 				finalres += line + "\n"
 			}
 			fmt.Println(finalres)
