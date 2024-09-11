@@ -48,8 +48,8 @@ func main() {
 			for _, line := range lines {
 				line = functions.HandleVowel(line)
 				line = functions.HandleQuote(line)
-				line = functions.TextFormated(strings.Fields(line))
 				line = functions.HandleKeyword(line)
+				line = functions.TextFormated(strings.Fields(line))
 				finalres += line + "\n"
 			}
 			

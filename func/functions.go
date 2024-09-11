@@ -124,11 +124,11 @@ func HandleParentheseParam(s []string) string {
 					} else {
 						switch content {
 						case "cap":
-							res2 += "(cap,1) "
+							res2 += "(cap, 1) "
 						case "low":
-							res2 += "(low,1) "
+							res2 += "(low, 1) "
 						case "up":
-							res2 += "(up,1) "
+							res2 += "(up, 1) "
 						case "hex", "bin":
 							res2 += "(" + content + ") "
 						default:
@@ -147,8 +147,8 @@ func HandleKeyword(s string) string{
 			str := HandleParenthese(s)
 			arr1 := strings.Fields(string(str))
 			res2 := HandleParentheseParam(arr1)
-			fmt.Println(res2)
 			arr := strings.Fields(res2)
+			fmt.Println(arr)
 			for i := 0; i < len(arr); i++ {
 				insideParenthese2 := false
 				if strings.HasPrefix(arr[i], "(") && strings.HasSuffix(arr[i], ")") {
