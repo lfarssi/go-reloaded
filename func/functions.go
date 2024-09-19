@@ -38,10 +38,13 @@ func HandleQuote(s string) string {
 
 	for i := 0; i < len(s); i++ {
 		word := s[i]
-		if word == '\''  && !(((s[i-1] >= 'a' && s[i-1] <= 'z')|| (s[i-1] >= 'A' && s[i+1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z')|| (s[i+1] >= 'A' && s[i+1] <= 'Z'))) {
+		if word == '\'' {
+			if i > 0 && i < len(s)-1 && ((s[i-1] >= 'a' && s[i-1] <= 'z') || (s[i-1] >= 'A' && s[i-1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z') || (s[i+1] >= 'A' && s[i+1] <= 'Z')) {
+				continue
+			}
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside) + "'"
-				if s[i+1] != ' ' {
+				if i < len(s)-1 && s[i+1] != ' ' {
 					result += " "
 				}
 				quoteOpen = false
@@ -49,7 +52,7 @@ func HandleQuote(s string) string {
 			} else {
 				quoteOpen = true
 				wordInside = ""
-				if s[i-1] != ' ' {
+				if i > 0 && s[i-1] != ' ' {
 					result += " "
 				}
 				result += "'"
@@ -80,9 +83,9 @@ func IsVowel(s string) bool {
 func HandleVowel(s string) string {
 	arr := strings.Fields(s)
 	for i := 0; i < len(arr); i++ {
-		if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(arr[i+1]) {
+		if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(ToLower(arr[i+1])) {
 			arr[i] += "n"
-		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(arr[i+1]) {
+		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(ToLower(arr[i+1])) {
 			arr[i] = arr[i][:len(arr[i])-1]
 		}
 	}
@@ -184,7 +187,36 @@ func HandleFlag(s string) string {
 	res2 := HandleParentheseParam(arr1)
 	arr := strings.Fields(res2)
 	for i := 0; i < len(arr); i++ {
-		if arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up," {
+		if arr[i] == "(bin)" {
+			arr = append(arr[:i], arr[i+1:]...)
+			// convert the string to 64 bit integer base 2
+			integer, err := strconv.ParseInt(arr[i-1], 2, 64)
+			if i-1 < 0 {
+				break
+			}
+			if err != nil {
+				//fmt.Println("you can't convert")
+				continue
+			}
+			arr[i-1] = strconv.Itoa(int(integer))
+			i--
+
+		} else if arr[i] == "(hex)" {
+			arr = append(arr[:i], arr[i+1:]...)
+
+			// convert the string to 64 bit integer base 16
+			integer, err := strconv.ParseInt(arr[i-1], 16, 64)
+			if i-1 < 0 {
+				break
+			}
+			if err != nil {
+				//fmt.Println("you can't convert")
+				continue
+			}
+			arr[i-1] = strconv.Itoa(int(integer))
+			i--
+
+		} else if arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up," {
 			if i+1 == len(arr) {
 				continue
 			}
@@ -215,19 +247,19 @@ func HandleFlag(s string) string {
 						i--
 					}
 					arr[i-j] = Capitalize(arr[i-j])
-					
+
 				} else if arr[i] == "(low," {
 					if !IsWord(arr[i-j]) && i-1 > 0 {
 						i--
 					}
 					arr[i-j] = ToLower(arr[i-j])
-					
+
 				} else if arr[i] == "(up," {
 					if !IsWord(arr[i-j]) && i-1 > 0 {
 						i--
 					}
 					arr[i-j] = ToUpper(arr[i-j])
-					
+
 				}
 				i = temp
 			}
@@ -235,28 +267,6 @@ func HandleFlag(s string) string {
 			arr = append(arr[:i], arr[i+2:]...)
 			// return one step to continue from the correct position
 			i = temp - 1
-		} else if arr[i] == "(bin)" {
-			// convert the string to 64 bit integer base 2
-			integer, err := strconv.ParseInt(arr[i-1], 2, 64)
-			if err != nil {
-				//fmt.Println("you can't convert")
-				continue
-			}
-			arr[i-1] = strconv.Itoa(int(integer))
-			arr = append(arr[:i], arr[i+1:]...)
-			i--
-
-		} else if arr[i] == "(hex)" {
-			// convert the string to 64 bit integer base 16
-			integer, err := strconv.ParseInt(arr[i-1], 16, 64)
-			if err != nil {
-				//fmt.Println("you can't convert")
-				continue
-			}
-			arr[i-1] = strconv.Itoa(int(integer))
-			arr = append(arr[:i], arr[i+1:]...)
-			i--
-
 		}
 	}
 	return strings.Join(arr, " ")
