@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 // formater le text like this are , rare ... reae => are, rare... reae
@@ -333,8 +332,8 @@ func Capitalize(word string) string {
 func ToUpper(s string) string {
 	var res []rune
 	for _, ch := range s {
-		if unicode.IsLetter(ch) {
-			res = append(res, unicode.ToUpper(ch))
+		if (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') {
+			res = append(res, ch-32)
 		} else {
 			res = append(res, ch)
 		}
@@ -346,7 +345,7 @@ func ToLower(s string) string {
 	var res []rune
 	for _, i := range s {
 		if (i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') {
-			res = append(res, unicode.ToLower(i))
+			res = append(res, i+32)
 		} else {
 			res = append(res, i)
 		}
