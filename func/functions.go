@@ -74,7 +74,7 @@ func HandleQuote(s string) string {
 
 // check if the string if vowel
 func IsVowel(s string) bool {
-	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' || s[0] =='h'  {
+	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' || s[0] == 'h' {
 		return true
 	}
 	return false
@@ -109,10 +109,10 @@ func HandleParenthese(s string) string {
 	beforeVergule := true
 	for _, v := range s {
 		if v == '(' {
-			t += " " + string(v)
+			t += string(v)
 			insideParenthese = true
 		} else if v == ')' {
-			t += string(v) + " "
+			t += string(v)
 			insideParenthese = false
 
 		} else {
@@ -191,13 +191,13 @@ func HandleFlag(s string) string {
 		if arr[i] == "(bin)" {
 			arr = append(arr[:i], arr[i+1:]...)
 			// convert the string to 64 bit integer base 2
-			integer, err := strconv.ParseInt(arr[i-1], 2, 32)
 			if i-1 < 0 {
 				break
 			}
+			integer, err := strconv.ParseInt(arr[i-1], 2, 32)
 			if err != nil {
 				fmt.Println(err)
-				//fmt.Println("you can't convert")
+				fmt.Println("you can't convert")
 				continue
 			}
 			arr[i-1] = strconv.Itoa(int(integer))
@@ -207,12 +207,12 @@ func HandleFlag(s string) string {
 			arr = append(arr[:i], arr[i+1:]...)
 
 			// convert the string to 64 bit integer base 16
-			integer, err := strconv.ParseInt(arr[i-1], 16, 64)
 			if i-1 < 0 {
 				break
 			}
+			integer, err := strconv.ParseInt(arr[i-1], 16, 64)
 			if err != nil {
-				//fmt.Println("you can't convert")
+				fmt.Println("you can't convert")
 				continue
 			}
 			arr[i-1] = strconv.Itoa(int(integer))
@@ -228,7 +228,7 @@ func HandleFlag(s string) string {
 			// convert the number to int value
 			nb, err = strconv.Atoi(strings.TrimSuffix(arr[i+1], ")"))
 			if err != nil {
-				//fmt.Println("msg err : The params is not a number ", err)
+				fmt.Println("msg err : The params is not a number ", err)
 				continue
 			}
 
@@ -275,26 +275,19 @@ func HandleFlag(s string) string {
 }
 
 // this function is used to skip the non words runes
-func Word(s string) string {
-	for _, r := range s {
-		if !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') {
-			continue
-		}
-	}
-	return s
-}
+// func Word(s string) string {
+// 	for _, r := range s {
+// 		if !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') {
+// 			continue
+// 		}
+// 	}
+// 	return s
+// }
 
 // check if the string is a letter or not
 func IsWord(s string) bool {
-	for _, r := range s {
-		if !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') {
-			if r == '(' || r == ')' {
-				return true
-			}
-			return false
-		}
-	}
-	return true
+	ponc := ",;:!?."
+	return !strings.ContainsAny(s, ponc)
 }
 
 func Capitalize(word string) string {
