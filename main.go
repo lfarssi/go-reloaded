@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	functions "go-reloaded/func"
+	"go-reloaded/func"
 	"os"
 	"strings"
 )
@@ -43,16 +43,19 @@ func main() {
 				fmt.Println("Err msg: ", err)
 				return
 			}
-			finalres:=""
+			finalres := ""
 			lines := strings.Split(string(res), "\n")
-			for _, line := range lines {
+			for i, line := range lines {
 				line = functions.HandleVowel(line)
-				line = functions.HandleQuote(line)
-				line = functions.HandleKeyword(line)
+				line = functions.HandleFlag(line)
 				line = functions.TextFormated(strings.Fields(line))
-				finalres += line + "\n"
+				line = functions.HandleQuote(line)
+				finalres += line 
+				if i != len(lines)-1{
+					finalres+="\n"
+				}
 			}
-			
+
 			err = os.WriteFile(out, []byte(finalres), 0o644)
 			if err != nil {
 				fmt.Println("Error writing file:", err)

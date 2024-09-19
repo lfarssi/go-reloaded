@@ -1,12 +1,12 @@
 package functions
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
+// formater le text like this are , rare ... reae => are, rare... reae
 func TextFormated(s []string) string {
 	var res string
 	ponc := ".?:!;,"
@@ -30,6 +30,7 @@ func TextFormated(s []string) string {
 	return strings.TrimSpace(res)
 }
 
+// handle if there is a word between ' make it a quote like ' and ' => 'and'
 func HandleQuote(s string) string {
 	var result string
 	wordInside := ""
@@ -37,14 +38,20 @@ func HandleQuote(s string) string {
 
 	for i := 0; i < len(s); i++ {
 		word := s[i]
-		if word == '\'' {
+		if word == '\''  && !(((s[i-1] >= 'a' && s[i-1] <= 'z')|| (s[i-1] >= 'A' && s[i+1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z')|| (s[i+1] >= 'A' && s[i+1] <= 'Z'))) {
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside) + "'"
+				if s[i+1] != ' ' {
+					result += " "
+				}
 				quoteOpen = false
 				wordInside = ""
 			} else {
 				quoteOpen = true
 				wordInside = ""
+				if s[i-1] != ' ' {
+					result += " "
+				}
 				result += "'"
 			}
 			continue
@@ -61,12 +68,15 @@ func HandleQuote(s string) string {
 	return result
 }
 
+// check if the string if vowel
 func IsVowel(s string) bool {
 	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' {
 		return true
 	}
 	return false
 }
+
+// when the string after a is vowel i replace it with an , if the string after an is not vowel i replace it with a
 func HandleVowel(s string) string {
 	arr := strings.Fields(s)
 	for i := 0; i < len(arr); i++ {
@@ -83,9 +93,16 @@ func HandleVowel(s string) string {
 	return str
 }
 
+/*
+the function is also for separate punctuation with spaces but the most important rule
+is to handle the between parentheses flag
+explination: adding the flag like with the space to check the format is it correct
+and the number without spaces
+*/
 func HandleParenthese(s string) string {
 	t := ""
 	insideParenthese := false
+	beforeVergule := true
 	for _, v := range s {
 		if v == '(' {
 			t += " " + string(v)
@@ -97,9 +114,14 @@ func HandleParenthese(s string) string {
 		} else {
 			if insideParenthese {
 				if v == ',' {
-					t += string(v) + " "
-				} else if v != ' ' {
+					beforeVergule = false
+				}
+				if beforeVergule {
 					t += string(v)
+				} else {
+					if v != ' ' {
+						t += string(v)
+					}
 				}
 			} else {
 				if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';' {
@@ -114,12 +136,19 @@ func HandleParenthese(s string) string {
 	return t
 }
 
+/*
+in this function i put the item between the () and modify it with my rules
+first rule if the flag is without number i add 1 default number in it
+second if the flag has a number i split with comma and add with  space after comma
+*/
 func HandleParentheseParam(s []string) string {
 	res2 := ""
 	for _, item := range s {
 		if strings.HasPrefix(item, "(") && strings.HasSuffix(item, ")") {
 			content := item[1 : len(item)-1]
 			if strings.Contains(content, ",") {
+				arr := strings.Split(content, ",")
+				content = arr[0] + ", " + arr[1]
 				res2 += "(" + content + ") "
 			} else {
 				switch content {
@@ -140,75 +169,92 @@ func HandleParentheseParam(s []string) string {
 		}
 
 	}
+
 	return res2
 }
 
-func HandleKeyword(s string) string {
+/*
+this is the most important function in my program
+i handle the parenthese i after that i convert it to a slice to handle the parameter inside the parenthese
+after that i convert it to a slice again to handle the flag based on the instruction
+*/
+func HandleFlag(s string) string {
 	str := HandleParenthese(s)
 	arr1 := strings.Fields(string(str))
 	res2 := HandleParentheseParam(arr1)
 	arr := strings.Fields(res2)
 	for i := 0; i < len(arr); i++ {
-		insideParenthese2 := false
-		if i < len(arr)-1 && strings.HasPrefix(arr[i], "(") && strings.HasSuffix(arr[i+1], ")") {
-			insideParenthese2 = true
-		} else {
-			insideParenthese2 = false
-		}
-		var action string
-		var nb int
-		if insideParenthese2 {
-			arr[i] = strings.TrimPrefix(arr[i], "(")
-			arr[i] = strings.TrimSuffix(arr[i], ",")
-			action = arr[i]
-			b := strings.TrimSuffix(arr[i+1], ")")
-			var err error
-			nb, err = strconv.Atoi(b)
-			if err != nil {
-				fmt.Println("msg err : not a number ", err)
+		if arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up," {
+			if i+1 == len(arr) {
 				continue
 			}
-		}
-		if action == "cap" || action == "low" || action == "up" {
-			t := i
+			var err error
+			var nb int
+			//remove )  from the number
+			// convert the number to int value
+			nb, err = strconv.Atoi(strings.TrimSuffix(arr[i+1], ")"))
+			if err != nil {
+				//fmt.Println("msg err : The params is not a number ", err)
+				continue
+			}
+
+			// store temporairement the index
+			temp := i
+			if nb < 0 {
+				continue
+			}
+			// loop for the number in the flag
 			for j := 1; j <= nb; j++ {
+				// break the loop before err out of range
 				if i-j < 0 {
 					break
 				}
-				if !IsWord(arr[i-j]) {
-					i--
-					continue
-				}
-				if action == "cap" {
+				// apply the changes based on the number
+				if arr[i] == "(cap," {
+					if !IsWord(arr[i-j]) && i-1 > 0 {
+						i--
+					}
 					arr[i-j] = Capitalize(arr[i-j])
-				} else if action == "low" {
+					
+				} else if arr[i] == "(low," {
+					if !IsWord(arr[i-j]) && i-1 > 0 {
+						i--
+					}
 					arr[i-j] = ToLower(arr[i-j])
-				} else if action == "up" {
+					
+				} else if arr[i] == "(up," {
+					if !IsWord(arr[i-j]) && i-1 > 0 {
+						i--
+					}
 					arr[i-j] = ToUpper(arr[i-j])
+					
 				}
-				i--
+				i = temp
 			}
-			i = t
-			arr[i] = ""
-			arr[i+1] = ""
+			// remove the flag and the number
+			arr = append(arr[:i], arr[i+2:]...)
+			// return one step to continue from the correct position
+			i = temp - 1
 		} else if arr[i] == "(bin)" {
+			// convert the string to 64 bit integer base 2
 			integer, err := strconv.ParseInt(arr[i-1], 2, 64)
 			if err != nil {
-				fmt.Println("you can't convert")
+				//fmt.Println("you can't convert")
 				continue
 			}
 			arr[i-1] = strconv.Itoa(int(integer))
-			arr[i] = ""
+			arr = append(arr[:i], arr[i+1:]...)
 			i--
 
 		} else if arr[i] == "(hex)" {
+			// convert the string to 64 bit integer base 16
 			integer, err := strconv.ParseInt(arr[i-1], 16, 64)
 			if err != nil {
-				fmt.Println("you can't convert")
+				//fmt.Println("you can't convert")
 				continue
 			}
 			arr[i-1] = strconv.Itoa(int(integer))
-			arr[i] = ""
+			arr = append(arr[:i], arr[i+1:]...)
 			i--
 
 		}
@@ -216,18 +262,29 @@ func HandleKeyword(s string) string {
 	return strings.Join(arr, " ")
 }
 
-func IsAlphabetNumerique(s byte) bool {
-	return (s < 'a' || s > 'z') && (s < 'A' || s > 'Z') && (s < '0' || s > '9')
+// this function is used to skip the non words runes
+func Word(s string) string {
+	for _, r := range s {
+		if !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') {
+			continue
+		}
+	}
+	return s
 }
 
+// check if the string is a letter or not
 func IsWord(s string) bool {
 	for _, r := range s {
-		if !unicode.IsLetter(r) {
+		if !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') {
+			if r == '(' || r == ')' {
+				return true
+			}
 			return false
 		}
 	}
 	return true
 }
+
 func Capitalize(word string) string {
 	word = ToLower(word)
 	for i := 0; i < len(word); i++ {
@@ -262,13 +319,11 @@ func Capitalize(word string) string {
 
 func ToUpper(s string) string {
 	var res []rune
-	for _, i := range s {
-		if i >= 'a' && i <= 'z' {
-			res = append(res, i-32)
-		} else if i == 'é' {
-			res = append(res, unicode.ToUpper(i))
+	for _, ch := range s {
+		if unicode.IsLetter(ch) {
+			res = append(res, unicode.ToUpper(ch))
 		} else {
-			res = append(res, i)
+			res = append(res, ch)
 		}
 	}
 	return string(res)
@@ -277,8 +332,8 @@ func ToUpper(s string) string {
 func ToLower(s string) string {
 	var res []rune
 	for _, i := range s {
-		if i >= 'A' && i <= 'Z' {
-			res = append(res, i+32)
+		if (i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') {
+			res = append(res, unicode.ToLower(i))
 		} else {
 			res = append(res, i)
 		}
