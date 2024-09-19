@@ -19,22 +19,8 @@ func main() {
 	} else {
 		in := args[0]
 		out := args[1]
-		inExt := ""
-		index := 0
-		outExt := ""
-		for i := len(in) - 1; i > 0; i-- {
-			if in[i] == '.' {
-				index = i
-			}
-		}
-		inExt = in[index+1:]
-		for j := len(out) - 1; j > 0; j-- {
-			if out[j] == '.' {
-				index = j
-			}
-		}
-		outExt = out[index+1:]
-		if inExt != "txt" || outExt != "txt" {
+
+		if !strings.HasSuffix(in, ".txt") || !strings.HasSuffix(out, ".txt") {
 			fmt.Println("the extension must be .txt")
 			os.Exit(1)
 		} else {
