@@ -32,10 +32,10 @@ func main() {
 			finalres := ""
 			lines := strings.Split(string(res), "\n")
 			for i, line := range lines {
-				line = functions.HandleVowel(line)
 				line = functions.HandleFlag(line)
-				line = functions.TextFormated(strings.Fields(line))
 				line = functions.HandleQuote(line)
+				line = functions.TextFormated(strings.Fields(line))
+				line = functions.HandleVowel(line)
 				finalres += line 
 				if i != len(lines)-1{
 					finalres+="\n"
