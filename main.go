@@ -20,7 +20,7 @@ func main() {
 		in := args[0]
 		out := args[1]
 		inExt := ""
-		index := -1
+		index := 0
 		outExt := ""
 		for i := len(in) - 1; i > 0; i-- {
 			if in[i] == '.' {
