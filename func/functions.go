@@ -40,7 +40,7 @@ func HandleQuote(s string) string {
 		word := s[i]
 		if word == '\'' {
 			if i > 0 && i < len(s)-1 && ((s[i-1] >= 'a' && s[i-1] <= 'z') || (s[i-1] >= 'A' && s[i-1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z') || (s[i+1] >= 'A' && s[i+1] <= 'Z')) {
-				result += "'"
+				result += string(word)
 				continue
 			}
 			if quoteOpen {
@@ -84,9 +84,9 @@ func IsVowel(s string) bool {
 func HandleVowel(s string) string {
 	arr := strings.Fields(s)
 	for i := 0; i < len(arr); i++ {
-		if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(ToLower(arr[i+1])) {
+		if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(strings.ToLower(arr[i+1])) {
 			arr[i] += "n"
-		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(ToLower(arr[i+1])) {
+		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(strings.ToLower(arr[i+1])) {
 			arr[i] = arr[i][:len(arr[i])-1]
 		}
 	}
@@ -254,13 +254,13 @@ func HandleFlag(s string) string {
 					if !IsWord(arr[i-j]) && i-1 > 0 {
 						i--
 					}
-					arr[i-j] = ToLower(arr[i-j])
+					arr[i-j] = strings.ToLower(arr[i-j])
 
 				} else if arr[i] == "(up," {
 					if !IsWord(arr[i-j]) && i-1 > 0 {
 						i--
 					}
-					arr[i-j] = ToUpper(arr[i-j])
+					arr[i-j] = strings.ToUpper(arr[i-j])
 
 				}
 				i = temp
@@ -298,57 +298,9 @@ func IsWord(s string) bool {
 }
 
 func Capitalize(word string) string {
-	word = ToLower(word)
+	word = strings.ToLower(word)
 	for i := 0; i < len(word); i++ {
-		word = ToUpper(string(word[0])) + word[1:]
+		word = strings.ToUpper(string(word[0])) + word[1:]
 	}
 	return word
-}
-
-// func Split(s, sep string) []string {
-// 	var result []string
-
-// 	if len(sep) == 0 {
-// 		return []string{s}
-// 	}
-
-// 	start := 0
-// 	for i := 0; i < len(s); i++ {
-// 		if i+len(sep) <= len(s) && s[i:i+len(sep)] == sep {
-// 			result = append(result, s[start:i])
-// 			// Move the start position past the separator
-// 			start = i + len(sep)
-// 			// Skip over the separator
-// 			i += len(sep) - 1
-// 		}
-// 	}
-
-// Add the last segment after the last separator
-// 	result = append(result, s[start:])
-
-// 	return result
-// }
-
-func ToUpper(s string) string {
-	var res []rune
-	for _, ch := range s {
-		if (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') {
-			res = append(res, ch-32)
-		} else {
-			res = append(res, ch)
-		}
-	}
-	return string(res)
-}
-
-func ToLower(s string) string {
-	var res []rune
-	for _, i := range s {
-		if (i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z') {
-			res = append(res, i+32)
-		} else {
-			res = append(res, i)
-		}
-	}
-	return string(res)
 }
