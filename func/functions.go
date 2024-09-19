@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -40,6 +41,7 @@ func HandleQuote(s string) string {
 		word := s[i]
 		if word == '\'' {
 			if i > 0 && i < len(s)-1 && ((s[i-1] >= 'a' && s[i-1] <= 'z') || (s[i-1] >= 'A' && s[i-1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z') || (s[i+1] >= 'A' && s[i+1] <= 'Z')) {
+				result += "'"
 				continue
 			}
 			if quoteOpen {
@@ -73,7 +75,7 @@ func HandleQuote(s string) string {
 
 // check if the string if vowel
 func IsVowel(s string) bool {
-	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' {
+	if s[0] == 'a' || s[0] == 'o' || s[0] == 'i' || s[0] == 'e' || s[0] == 'u' || s[0] =='h'  {
 		return true
 	}
 	return false
@@ -190,11 +192,12 @@ func HandleFlag(s string) string {
 		if arr[i] == "(bin)" {
 			arr = append(arr[:i], arr[i+1:]...)
 			// convert the string to 64 bit integer base 2
-			integer, err := strconv.ParseInt(arr[i-1], 2, 64)
+			integer, err := strconv.ParseInt(arr[i-1], 2, 32)
 			if i-1 < 0 {
 				break
 			}
 			if err != nil {
+				fmt.Println(err)
 				//fmt.Println("you can't convert")
 				continue
 			}
