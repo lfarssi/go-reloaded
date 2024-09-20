@@ -34,8 +34,8 @@ func main() {
 			for i, line := range lines {
 				line = functions.HandleFlag(line)
 				line = functions.HandleVowel(line)
-				line = functions.TextFormated(strings.Fields(line))
 				line = functions.HandleQuote(line)
+				line = functions.TextFormated(strings.Fields(line))
 				finalres += line 
 				if i != len(lines)-1{
 					finalres+="\n"

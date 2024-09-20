@@ -9,7 +9,7 @@ import (
 // formater le text like this are , rare ... reae => are, rare... reae
 func TextFormated(s []string) string {
 	var res string
-	ponc := ".?:!;,"
+	ponc := ".?:!;,l"
 	for i, ch := range s {
 		if ch == "," || ch == "!" || ch == "?" || ch == ":" || ch == ";" || ch == "." {
 			if len(res) > 0 && res[len(res)-1] == ' ' {
@@ -18,17 +18,32 @@ func TextFormated(s []string) string {
 			if len(res) > 0 && !strings.ContainsAny(res, ponc) {
 				res += ch
 			} else {
-				res += string(ch)
+				res += ch
 			}
 			if i < len(s)-1 && s[i+1] != " " {
 				res += " "
 			}
 		} else {
-			res += ch + " "
-
+			if strings.ContainsAny(ch, ponc){
+				res += Freeze(ch) + " "
+			} else {
+				res += ch + " "
+			}
+			
 		}
 	}
 	return strings.TrimSpace(res)
+}
+func Freeze(s string) string {
+	var res string
+	for _, ch := range s {
+		if ch == ',' || ch == '!' || ch == '?' || ch == ':' || ch == ';' || ch == '.' {
+			res += string(ch) + string(' ')
+		} else {
+			res += string(ch)
+		}
+	}
+	return res
 }
 
 // handle if there is a word between ' make it a quote like ' and ' => 'and'
