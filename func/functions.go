@@ -20,11 +20,16 @@ func TextFormated(s []string) string {
 			} else {
 				res += string(ch)
 			}
-			if i+1 < len(s) && s[i+1] != " " {
+			if i < len(s)-1 && s[i+1] != " " && s[i+1] != "\n" {
 				res += " "
-			}
-		} else {
-			res += ch + " "
+				}
+				} else {
+					if s[i+1] != "\n"  {
+						res += ch + " "
+					}
+					fmt.Println("s")
+			
+			
 		}
 	}
 	return strings.TrimSpace(res)
