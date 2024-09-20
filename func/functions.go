@@ -184,13 +184,11 @@ i handle the parenthese i after that i convert it to a slice to handle the param
 after that i convert it to a slice again to handle the flag based on the instruction
 */
 func HandleFlag(s string) string {
-	fmt.Println(s)
 	//str := HandleParenthese(s)
 	//arr1 := strings.Fields(string(str))
 	//res2 := HandleParentheseParam(arr1)
 	arr := strings.Fields(s)
 	for i := 0; i < len(arr); i++ {
-		fmt.Println("tttt", arr[i])
 		if arr[i] == "(bin)" {
 			arr = append(arr[:i], arr[i+1:]...)
 			// convert the string to 64 bit integer base 2
@@ -199,7 +197,6 @@ func HandleFlag(s string) string {
 			}
 			integer, err := strconv.ParseInt(arr[i-1], 2, 32)
 			if err != nil {
-				fmt.Println(err)
 				fmt.Println("you can't convert")
 				continue
 			}
