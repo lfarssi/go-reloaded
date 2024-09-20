@@ -87,7 +87,7 @@ func HandleVowel(s string) string {
 	for i := 0; i < len(arr); i++ {
 		if strings.ToLower(arr[i]) == "a" && i+1 < len(arr) && IsVowel(strings.ToLower(arr[i+1])) {
 			arr[i] += "n"
-		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(strings.ToLower(arr[i+1])) {
+		} else if strings.ToLower(arr[i]) == "an" && i+1 < len(arr) && !IsVowel(strings.ToLower(arr[i+1])) && IsWord(strings.ToLower(arr[i+1])) && i < len(arr)-1 {
 			arr[i] = arr[i][:len(arr[i])-1]
 		}
 	}
@@ -132,7 +132,7 @@ and the number without spaces
 // 				if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';' {
 // 					t += " " + string(v) + " "
 // 				} else {
-// 					t += string(v)
+// 					tok += string(v)
 // 				}
 // 			}
 // 		}
@@ -232,7 +232,7 @@ func HandleFlag(s string) string {
 			arr[i-1] = strings.ToUpper(arr[i-1])
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
-		} else if arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up," {
+		} else if (arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up,") && strings.ContainsAny(arr[i+1],")") {
 			if i+1 == len(arr) {
 				continue
 			}
@@ -299,4 +299,11 @@ func Capitalize(word string) string {
 		word = strings.ToUpper(string(word[0])) + word[1:]
 	}
 	return word
+}
+
+func IsWord(s string) bool {
+	if s == "'" || s == "!" || s== "," || s== "." || s=="\n" || s=="?" || s==";" {
+		return false
+	}
+	return true
 }
