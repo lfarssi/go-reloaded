@@ -218,15 +218,22 @@ func HandleFlag(s string) string {
 			i--
 
 		} else if arr[i] == "(cap)" {
+			if i > 0 {
 			arr[i-1] = Capitalize(arr[i-1])
+		}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
 		} else if arr[i] == "(low)" {
+			if i > 0 {
 			arr[i-1] = strings.ToLower(arr[i-1])
+		}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
 		} else if arr[i] == "(up)" {
-			arr[i-1] = strings.ToUpper(arr[i-1])
+			if i > 0 {
+
+				arr[i-1] = strings.ToUpper(arr[i-1])
+			}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
 		} else if (arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up,") && strings.ContainsAny(arr[i+1],")") {

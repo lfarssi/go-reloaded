@@ -15,7 +15,7 @@ func main() {
 		os.Exit(1)
 	} else if length > 2 {
 		fmt.Println("too much arguments")
-		os.Exit(1)
+		os.Exit(21)
 	} else {
 		in := args[0]
 		out := args[1]
@@ -34,8 +34,8 @@ func main() {
 			for i, line := range lines {
 				line = functions.HandleFlag(line)
 				line = functions.HandleVowel(line)
-				line = functions.HandleQuote(line)
 				line = functions.TextFormated(strings.Fields(line))
+				line = functions.HandleQuote(line)
 				finalres += line 
 				if i != len(lines)-1{
 					finalres+="\n"
