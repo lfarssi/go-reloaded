@@ -51,17 +51,14 @@ func HandleQuote(s string) string {
 	var result string
 	wordInside := ""
 	quoteOpen := false
-
+	fmt.Println(s)
 	for i := 0; i < len(s); i++ {
 		word := s[i]
 		if word == '\'' {
-			if i > 0 && i < len(s)-1 && ((s[i-1] >= 'a' && s[i-1] <= 'z') || (s[i-1] >= 'A' && s[i-1] <= 'Z')) && ((s[i+1] >= 'a' && s[i+1] <= 'z') || (s[i+1] >= 'A' && s[i+1] <= 'Z')) {
-				result += string(word)
-				continue
-			}
+			
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside) + "'"
-				if i < len(s)-1 && IsWord(string(s[i+1])) {
+				if i < len(s)-1 && (IsWord(string(s[i+1])) || s[i+1]=='\'') {
 					result += " "
 				}
 				quoteOpen = false
@@ -69,13 +66,14 @@ func HandleQuote(s string) string {
 			} else {
 				quoteOpen = true
 				wordInside = ""
-				if i > 0 && IsWord(string(s[i-1])) {
+				if i > 0 && (IsWord(string(s[i-1])) || s[i-1]=='\'')  {
 					result += " "
 				}
 				result += "'"
 			}
 			continue
 		}
+		
 		if quoteOpen {
 			wordInside += string(word)
 		} else {

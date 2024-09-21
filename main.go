@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-reloaded/func"
+	functions "go-reloaded/func"
 	"os"
 	"strings"
 )
@@ -34,12 +34,11 @@ func main() {
 			for i, line := range lines {
 				line = functions.HandleFlag(line)
 				line = functions.TextFormated(strings.Fields(line))
-				line = functions.TextFormated(strings.Fields(line))
 				line = functions.HandleQuote(line)
 				line = functions.HandleVowel(line)
-				finalres += line 
-				if i != len(lines)-1{
-					finalres+="\n"
+				finalres += line
+				if i != len(lines)-1 {
+					finalres += "\n"
 				}
 			}
 
