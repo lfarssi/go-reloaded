@@ -51,11 +51,12 @@ func HandleQuote(s string) string {
 	var result string
 	wordInside := ""
 	quoteOpen := false
-	fmt.Println(s)
 	for i := 0; i < len(s); i++ {
 		word := s[i]
-		if word == '\'' {
-			
+		if word == '\'' && i > 0 && i < len(s)-1 && (IsWord(string(s[i-1])) ) && IsWord(string(s[i+1])){
+			wordInside += string(word)
+			continue
+		} else if word == '\'' {
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside) + "'"
 				if i < len(s)-1 && (IsWord(string(s[i+1])) || s[i+1]=='\'') {
@@ -309,8 +310,5 @@ func Capitalize(word string) string {
 }
 
 func IsWord(s string) bool {
-	if s == "'" || s == "!" || s == "," || s == "." || s == "\n" || s == "?" || s == ";" {
-		return false
-	}
-	return true
+	return len(s)> 0 && strings.ContainsAny(strings.ToLower(s), "abcdefghijklmnopqrstuvwxyz")
 }
