@@ -54,8 +54,7 @@ func HandleQuote(s string) string {
 	for i := 0; i < len(s); i++ {
 		word := s[i]
 		if word == '\'' && i > 0 && i < len(s)-1 && (IsWord(string(s[i-1])) ) && IsWord(string(s[i+1])){
-			wordInside += string(word)
-			continue
+			wordInside += ""
 		} else if word == '\'' {
 			if quoteOpen {
 				result += strings.TrimSpace(wordInside) + "'"
