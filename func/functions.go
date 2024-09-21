@@ -24,12 +24,12 @@ func TextFormated(s []string) string {
 				res += " "
 			}
 		} else {
-			if strings.ContainsAny(ch, ponc){
-				res += Freeze(ch) + " "
-			} else {
-				res += ch + " "
-			}
-			
+			// if strings.ContainsAny(ch, ponc){
+			// 	res += Freeze(ch) + " "
+			// } else {
+			// }
+			res += ch + " "
+
 		}
 	}
 	return strings.TrimSpace(res)
@@ -38,7 +38,7 @@ func Freeze(s string) string {
 	var res string
 	for _, ch := range s {
 		if ch == ',' || ch == '!' || ch == '?' || ch == ':' || ch == ';' || ch == '.' {
-			res += string(ch) + string(' ')
+			res += string(' ') + string(ch) + string(' ')
 		} else {
 			res += string(ch)
 		}
@@ -69,7 +69,7 @@ func HandleQuote(s string) string {
 			} else {
 				quoteOpen = true
 				wordInside = ""
-				if i > 0 && IsWord(string(s[i-1])){
+				if i > 0 && IsWord(string(s[i-1])) {
 					result += " "
 				}
 				result += "'"
@@ -119,42 +119,32 @@ is to handle the between parentheses flag
 explination: adding the flag like with the space to check the format is it correct
 and the number without spaces
 */
-// func HandleParenthese(s string) string {
-// 	t := ""
-// 	insideParenthese := false
-// 	beforeVergule := true
-// 	for _, v := range s {
-// 		if v == '(' {
-// 			t += string(v)
-// 			insideParenthese = true
-// 		} else if v == ')' {
-// 			t += string(v)
-// 			insideParenthese = false
+func HandleParenthese(s string) string {
+	t := ""
+	insideParenthese := false
+	for _, v := range s {
+		if v == '(' {
+			t += string(v)
+			insideParenthese = true
+		} else if v == ')' {
+			t += string(v)
+			insideParenthese = false
 
-// 		} else {
-// 			if insideParenthese {
-// 				if v == ',' {
-// 					beforeVergule = false
-// 				}
-// 				if beforeVergule {
-// 					t += string(v)
-// 				} else {
-// 					if v != ' ' {
-// 						t += string(v)
-// 					}
-// 				}
-// 			} else {
-// 				if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';' {
-// 					t += " " + string(v) + " "
-// 				} else {
-// 					tok += string(v)
-// 				}
-// 			}
-// 		}
+		} else {
+			if insideParenthese {
+				t += string(v)
+			} else {
+				if v == ',' || v == '.' || v == ':' || v == '!' || v == '?' || v == ';' {
+					t += " " + string(v) + " "
+				} else {
+					t += string(v)
+				}
+			}
+		}
 
-// 	}
-// 	return t
-// }
+	}
+	return t
+}
 
 // /*
 // in this function i put the item between the () and modify it with my rules
@@ -199,10 +189,10 @@ i handle the parenthese i after that i convert it to a slice to handle the param
 after that i convert it to a slice again to handle the flag based on the instruction
 */
 func HandleFlag(s string) string {
-	//str := HandleParenthese(s)
+	str := HandleParenthese(s)
 	//arr1 := strings.Fields(string(str))
 	//res2 := HandleParentheseParam(arr1)
-	arr := strings.Fields(s)
+	arr := strings.Fields(str)
 	for i := 0; i < len(arr); i++ {
 		if arr[i] == "(bin)" {
 			arr = append(arr[:i], arr[i+1:]...)
@@ -234,14 +224,14 @@ func HandleFlag(s string) string {
 
 		} else if arr[i] == "(cap)" {
 			if i > 0 {
-			arr[i-1] = Capitalize(arr[i-1])
-		}
+				arr[i-1] = Capitalize(arr[i-1])
+			}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
 		} else if arr[i] == "(low)" {
 			if i > 0 {
-			arr[i-1] = strings.ToLower(arr[i-1])
-		}
+				arr[i-1] = strings.ToLower(arr[i-1])
+			}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
 		} else if arr[i] == "(up)" {
@@ -251,7 +241,7 @@ func HandleFlag(s string) string {
 			}
 			arr = append(arr[:i], arr[i+1:]...)
 			i--
-		} else if (arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up,") && strings.ContainsAny(arr[i+1],")") {
+		} else if (arr[i] == "(cap," || arr[i] == "(low," || arr[i] == "(up,") && i != len(arr)-1 && strings.ContainsAny(arr[i+1], ")") {
 			if i+1 == len(arr) {
 				continue
 			}
@@ -321,7 +311,7 @@ func Capitalize(word string) string {
 }
 
 func IsWord(s string) bool {
-	if s == "'" || s == "!" || s== "," || s== "." || s=="\n" || s=="?" || s==";" {
+	if s == "'" || s == "!" || s == "," || s == "." || s == "\n" || s == "?" || s == ";" {
 		return false
 	}
 	return true
